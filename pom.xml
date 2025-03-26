@@ -9,7 +9,7 @@
         <version>5.1.0.1</version>
     </parent>
 
-    <artifactId>x-dtig-agent-assist</artifactId>
+    <artifactId>x-dtitg-agent-assist</artifactId>
     <description>Agent Assist</description>
     <version>0.0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -20,7 +20,7 @@
     </scm>
 
     <properties>
-        <plugin.dir>com.x_dtig_agent_assist</plugin.dir>
+        <plugin.dir>com.x_dtitg_agent_assist</plugin.dir>
         <sauce.tunnelId>${user.name}@localhost</sauce.tunnelId>
         <jenkins.credentials.saucelabs>tectonic-sauce-credentials</jenkins.credentials.saucelabs>
         <node.verify_cmd>run verify --if-present</node.verify_cmd>

@@ -1,6 +1,6 @@
 {
   "components": {
-    "x-dtig-agent-assist": {
+    "x-dtitg-agent-assist": {
       "innerComponents": [
         "now-icon",
         "now-loader",
@@ -10,7 +10,14 @@
         {
           "name": "set_template",  
           "action": "SET_TEMPLATE",
-          "label": "Get the template ID to apply"
+          "label": "GET TEMPLATE",
+          "payload": []
+        },
+        {
+          "name": "open_article",
+          "action": "OPEN_FULL_VIEW",
+          "label": "OPEN FULL VIEW",
+          "payload": []
         }
       ],
       "uiBuilder": {
@@ -18,19 +25,18 @@
           "global.core",
           "global.landing-page"
         ],
-        "label": "My Component",
+        "label": "Knowledge Search",
         "tileIcon": "./tile-icon/generic-tile-icon.svg",
-        "description": "A description of my component",
+        "description": "Search the knowledge articles",
         "category": "primitives"
       },
 
- 
       "properties": [
        
         {
           "name": "fields",
           "label": "Fields",
-          "description": "Fields to display",
+          "description": "Fields",
           "fieldType": "json",
           "defaultValue": {
             "short_description": {
