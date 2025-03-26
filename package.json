@@ -1,0 +1,33 @@
+{
+  "name": "x-dtig-agent-assist",
+  "version": "0.0.1",
+  "private": false,
+  "description": "Agent Assist",
+  "keywords": [
+    "ServiceNow",
+    "Next Experience UI Component",
+    "x-dtig-agent-assist"
+  ],
+  "readme": "./README.md",
+  "engines": {
+    "node": ">=22"
+  },
+  "module": "src/index.js",
+  "dependencies": {
+    "@servicenow/now-button": "^19.8.2-ecd",
+    "@servicenow/now-heading": "^19.8.2-ecd",
+    "@servicenow/now-icon": "^19.8.2-ecd",
+    "@servicenow/now-label-value": "^19.8.2-ecd",
+    "@servicenow/now-loader": "^19.8.2-ecd",
+    "@servicenow/now-rich-text": "^19.8.2-ecd",
+    "@servicenow/sass-kit": "latest",
+    "@servicenow/ui-core": "24.1.1",
+    "@servicenow/ui-effect-http": "^24.1.1",
+    "@servicenow/ui-renderer-snabbdom": "24.1.1"
+  },
+  "devDependencies": {
+    "@babel/runtime": "7.25.7",
+    "ajv": "^6.12.6",
+    "sass": "1.53.0"
+  }
+}

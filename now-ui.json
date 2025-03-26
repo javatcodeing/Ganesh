@@ -1,0 +1,48 @@
+{
+  "components": {
+    "x-dtig-agent-assist": {
+      "innerComponents": [
+        "now-icon",
+        "now-loader",
+        "now-heading"
+      ],
+      "actions":[
+        {
+          "name": "set_template",  
+          "action": "SET_TEMPLATE",
+          "label": "Get the template ID to apply"
+        }
+      ],
+      "uiBuilder": {
+        "associatedTypes": [
+          "global.core",
+          "global.landing-page"
+        ],
+        "label": "My Component",
+        "tileIcon": "./tile-icon/generic-tile-icon.svg",
+        "description": "A description of my component",
+        "category": "primitives"
+      },
+
+ 
+      "properties": [
+       
+        {
+          "name": "fields",
+          "label": "Fields",
+          "description": "Fields to display",
+          "fieldType": "json",
+          "defaultValue": {
+            "short_description": {
+              "displayValue": "email",
+              "value": "email",
+              "visible": true
+            }
+          }
+        }
+            ]
+
+    }
+  },
+  "scopeName": "x_dtitg_agent"
+}
