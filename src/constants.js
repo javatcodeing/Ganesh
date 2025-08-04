@@ -17,6 +17,11 @@ export const GET_CONTEXTUAL_SEARCH_RESULTS="GET_CONTEXTUAL_SEARCH_RESULTS";
 export const SEARCH_CONTEXT_USED='69a05b3853001300a9a2664906dc343f';
 export const SEARCH_TABLES=["kb_template_faq", "kb_template_how_to", "kb_template_kcs_article", "kb_template_what_is", "kb_knowledge"]; //"u_kb_template_business_case",
 export const SEARCH_API ='/api/now/cxs/search';
+export const USER_PREFERENCE_API = '/api/now/table/sys_user_preference';
+export const THEME_PREFERENCE_QUERY = 'name=glide.ui.polaris.theme.variant^user=b3293da20cf452505dcfa4300ffc3c2f';
+export const DARK_MODE_VALUE = 'bc7f41d02b807950c0fb4cfbad01a098';
+export const FETCH_USER_THEME_PREFERENCE = 'FETCH_USER_THEME_PREFERENCE';
+export const SET_THEME_PREFERENCE = 'SET_THEME_PREFERENCE';
 
 export const DISPLAY_FIELDS=[
     { title: "", field: "text" },
@@ -37,4 +42,44 @@ export const DISPLAY_FIELDS=[
     { title: "Introduction", field: "kb_introduction" },
     { title: "Explanation", field: "kb_explanation" }
 ]
+
+// Dark Mode Color Schemes
+export const THEME_COLORS = {
+    light: {
+        background: '#d4e9e2',
+        containerBg: '#d4e9e2',
+        cardBg: '#ffffff',
+        textPrimary: '#333333',
+        textSecondary: '#555555',
+        textMuted: '#616161',
+        textLight: '#777777',
+        border: '#cccccc',
+        borderLight: '#e0e0e0',
+        shadow: 'rgba(0, 0, 0, 0.1)',
+        inputBg: '#d4e9e2',
+        inputFocusBg: '#ffffff',
+        iconColor: '#555555',
+        buttonBg: '#ffffff',
+        buttonHover: '#f5f5f5',
+        divider: '#cccccc'
+    },
+    dark: {
+        background: '#1a1a1a',
+        containerBg: '#2d2d2d',
+        cardBg: '#3a3a3a',
+        textPrimary: '#ffffff',
+        textSecondary: '#e0e0e0',
+        textMuted: '#b0b0b0',
+        textLight: '#999999',
+        border: '#4a4a4a',
+        borderLight: '#3a3a3a',
+        shadow: 'rgba(0, 0, 0, 0.3)',
+        inputBg: '#3a3a3a',
+        inputFocusBg: '#4a4a4a',
+        iconColor: '#e0e0e0',
+        buttonBg: '#4a4a4a',
+        buttonHover: '#5a5a5a',
+        divider: '#4a4a4a'
+    }
+}
 

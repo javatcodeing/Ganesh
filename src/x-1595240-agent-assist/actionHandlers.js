@@ -19,7 +19,12 @@ import {
     SEARCH_TABLES,
     KB_KNOWLEDGE_REST_URL,
     SEARCH_API,
-    ERROR_PREFIX
+    ERROR_PREFIX,
+    USER_PREFERENCE_API,
+    THEME_PREFERENCE_QUERY,
+    DARK_MODE_VALUE,
+    FETCH_USER_THEME_PREFERENCE,
+    SET_THEME_PREFERENCE
 } from '../constants';
 
 let contextualResultsStore = []; // Stores contextual search results
@@ -48,6 +53,13 @@ export default {
      */
     [actionTypes.COMPONENT_CONNECTED]: ({ dispatch, properties: { fields }, updateState }) => {
         try {
+            // Fetch user theme preference on component load
+            dispatch(FETCH_USER_THEME_PREFERENCE, {
+                sysparm_query: THEME_PREFERENCE_QUERY,
+                sysparm_limit: 1,
+                sysparm_display_value: true
+            });
+            
             if (fields) triggerSearch(fields, { dispatch, updateState });
         } catch (error) {
             console.error(`${ERROR_PREFIX} Error in COMPONENT_CONNECTED:`, error);
@@ -99,6 +111,15 @@ export default {
         queryParams: ['sysparm_query', 'sysparm_limit', 'sysparm_display_value'],
         startActionType: KB_KNOWLEDGE_FETCH_STARTED,
         successActionType: SET_SEARCH_RESULT,
+        errorActionType: KB_KNOWLEDGE_FETCH_FAILED
+    }),
+
+    /**
+     * Fetches user theme preference from sys_user_preference table.
+     */
+    [FETCH_USER_THEME_PREFERENCE]: createHttpEffect(USER_PREFERENCE_API, {
+        queryParams: ['sysparm_query', 'sysparm_limit', 'sysparm_display_value'],
+        successActionType: SET_THEME_PREFERENCE,
         errorActionType: KB_KNOWLEDGE_FETCH_FAILED
     }),
 
@@ -203,4 +224,32 @@ export default {
     [OPEN_FULL_VIEW]: ({ action }) => {
        // console.log("Open Article:", action.payload);
     },
+
+    /**
+     * Processes user theme preference and sets dark mode accordingly.
+     */
+    [SET_THEME_PREFERENCE]: ({ action, updateState, updateProperties }) => {
+        try {
+            const preferences = action.payload.result || [];
+            let isDarkMode = false;
+
+            if (preferences.length > 0) {
+                const themePreference = preferences[0];
+                // Check if the value matches the dark mode identifier
+                isDarkMode = themePreference.value === DARK_MODE_VALUE;
+                console.log(`${ERROR_PREFIX} Theme preference detected:`, {
+                    preferenceValue: themePreference.value,
+                    isDarkMode: isDarkMode
+                });
+            }
+
+            // Update the darkMode property
+            updateProperties({ darkMode: isDarkMode });
+            
+        } catch (error) {
+            console.error(`${ERROR_PREFIX} Error in SET_THEME_PREFERENCE:`, error);
+            // Default to light mode on error
+            updateProperties({ darkMode: false });
+        }
+    }
 };

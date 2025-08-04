@@ -6,9 +6,17 @@ import '@servicenow/now-button';
 import '@servicenow/now-heading';
 import '@servicenow/now-icon';
 import '@servicenow/now-rich-text';
-import { SET_TEMPLATE, DISPLAY_FIELDS } from '../constants';
+import { SET_TEMPLATE, DISPLAY_FIELDS, THEME_COLORS } from '../constants';
 
-const Styles = {
+/**
+ * Get theme-aware styles for search response rendering
+ * @param {boolean} darkMode - Whether dark mode is enabled
+ * @returns {Object} Theme-specific styles
+ */
+const getSearchResponseStyles = (darkMode = false) => {
+    const theme = darkMode ? THEME_COLORS.dark : THEME_COLORS.light;
+    
+    return {
     header: {
         display: 'flex',
         justifyContent: 'space-between',
@@ -21,7 +29,7 @@ const Styles = {
         gap: '8px',
     },
     span: {
-        color: 'black',
+        color: theme.textPrimary,
         fontWeight: '400',
     },
     actionContainer: {
@@ -38,7 +46,7 @@ const Styles = {
     summary: {
         whiteSpace: 'normal',
         marginTop: '3px',
-        color: '#616161',
+        color: theme.textMuted,
         fontSize: '15px',
         flexGrow: 1,  
     },
@@ -49,7 +57,7 @@ const Styles = {
         marginTop: '10px',
         fontSize: '14px',
         fontWeight: '500',
-        color: '#333',
+        color: theme.textPrimary,
     },
     noResultMessage: {
         display: 'flex',
@@ -62,46 +70,53 @@ const Styles = {
     },
     contcontainer: {
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-        gap: '16px',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+        gap: '12px',
         width: '100%',
-        padding: '8px',
+        padding: '4px',
         boxSizing: 'border-box',
     },
     article: {
         display: 'flex',
         flexDirection: 'column',
-        borderRadius: '8px',
-        border: '1px solid #e0e0e0',
-        padding: '10px',
-        //backgroundColor: '#d4e9e2',
-        backgroundColor: 'white',
-        boxShadow: '0px 2px 4px rgba(0.5, 0.5, 0.5, 0.5)',
+        borderRadius: '4px',
+        border: `1px solid ${theme.borderLight}`,
+        padding: '8px',
+        backgroundColor: theme.cardBg,
+        boxShadow: `0px 1px 3px ${theme.shadow}`,
         cursor: 'pointer',
         boxSizing: 'border-box',
-        minWidth: '280px',
-        transition: 'transform 0.2s ease-in-out',
-        display: 'flex',  // Make sure it behaves as a flex container
-        flexDirection: 'column',
-        height: '100%',  // Allow container to grow and align footer correctly
+        minWidth: '250px',
+        transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+        height: '100%',
+        '&:hover': {
+            transform: 'translateY(-1px)',
+            boxShadow: `0px 2px 6px ${theme.shadow}`,
+        }
     },
     responsive: `
-        @media (max-width: 1024px) {
+        @media (max-width: 1200px) {
             .contcontainer {
-                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 8px;
             }
         }
         @media (max-width: 768px) {
             .contcontainer {
-                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                grid-template-columns: 1fr;
+                gap: 6px;
+            }
+            .article {
+                min-width: unset;
             }
         }
         @media (max-width: 480px) {
             .contcontainer {
-                grid-template-columns: 1fr;
+                padding: 2px;
             }
         }
     `,
+    };
 };
 
 function timeAgo(dateString) {
@@ -168,10 +183,13 @@ function displaySummary(item) {
 }
 
 
-export const renderSearchResponse = (result, fullView, dispatch, openedArticle, updateState) => (
-    <Fragment>
-        <div style={Styles.contcontainer}>
-            <style>{Styles.responsive}</style>
+export const renderSearchResponse = (result, fullView, dispatch, openedArticle, updateState, darkMode = false) => {
+    const Styles = getSearchResponseStyles(darkMode);
+    
+    return (
+        <Fragment>
+            <div style={Styles.contcontainer}>
+                <style>{Styles.responsive}</style>
             {result.length ? (
                 result.map((item) => (
                     <div className="article" 
@@ -219,4 +237,5 @@ export const renderSearchResponse = (result, fullView, dispatch, openedArticle, 
             )}
         </div>
     </Fragment>
-);
+    );
+};

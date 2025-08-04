@@ -1,1 +1,42 @@
 @import '@servicenow/sass-kit/host';
+
+// ServiceNow Workspace Integration Styles
+:host {
+    display: block;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    
+    // Ensure component fits within workspace panels
+    .agent-assist-container {
+        width: 100%;
+        height: 100%;
+        min-height: 200px;
+        max-height: 100vh;
+        overflow: auto;
+        box-sizing: border-box;
+    }
+    
+    // Responsive adjustments for workspace
+    @media (max-width: 768px) {
+        .agent-assist-container {
+            min-height: 150px;
+            padding: 0.5rem;
+        }
+    }
+    
+    // Integration with ServiceNow UI components
+    now-heading {
+        margin-bottom: 0.5rem;
+    }
+    
+    now-button {
+        margin: 0.25rem;
+    }
+    
+    // Ensure proper scrolling in workspace
+    .search-results {
+        overflow-y: auto;
+        max-height: calc(100vh - 120px);
+    }
+}
