@@ -1,8 +1,8 @@
-import '../src/x-dtitg-agent-assist';
+import '../src/x-1595240-agent-assist';
 
 const el = document.createElement('DIV');
 document.body.appendChild(el);
 
 el.innerHTML = `		
-	<x-dtitg-agent-assist></x-dtitg-agent-assist>
+	<x-1595240-agent-assist></x-1595240-agent-assist>
 `;

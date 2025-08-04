@@ -1,12 +1,12 @@
 {
-  "name": "x-dtitg-agent-assist",
+  "name": "x-1595240-agent-assist",
   "version": "0.0.1",
   "private": false,
-  "description": "Agent Assist",
+  "description": "",
   "keywords": [
     "ServiceNow",
     "Next Experience UI Component",
-    "x-dtitg-agent-assist"
+    "x-1595240-agent-assist"
   ],
   "readme": "./README.md",
   "engines": {

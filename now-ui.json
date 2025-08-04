@@ -1,6 +1,6 @@
 {
   "components": {
-    "x-dtitg-agent-assist": {
+    "x-1595240-agent-assist": {
       "innerComponents": [
         "now-icon",
         "now-loader",
@@ -49,5 +49,5 @@
 
     }
   },
-  "scopeName": "x_dtitg_agent"
+  "scopeName": "x_1595240_assist"
 }

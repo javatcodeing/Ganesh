@@ -3,8 +3,7 @@ import snabbdom from '@servicenow/ui-renderer-snabbdom';
 import actionHandlers from './actionHandlers';
 import view from './view';
 
-
-createCustomElement('x-dtitg-agent-assist', {
+createCustomElement('x-1595240-agent-assist', {
 	renderer: {type: snabbdom},
 	view,
 	initialState: {
@@ -16,7 +15,7 @@ createCustomElement('x-dtitg-agent-assist', {
 		searchBgColor:"#d4e9e2"
 	},
 	properties: {
-	
+		nowAvoidRender: { default: true },
 		fields: {
 			default: {
 				short_description: {
@@ -26,14 +25,13 @@ createCustomElement('x-dtitg-agent-assist', {
 				}
 			}
 		},
-		fullView: { default:false},
+		fullView: { default:false}, 
 		openedArticle:{
 			default:{}
 		},
-
 		searchBgColor:{
 			default:"#d4e9e2"
-		}
+		},
 	},
 	
 	actionHandlers

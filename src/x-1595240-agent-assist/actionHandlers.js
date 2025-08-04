@@ -18,11 +18,14 @@ import {
     SEARCH_CONTEXT_USED,
     SEARCH_TABLES,
     KB_KNOWLEDGE_REST_URL,
-    SEARCH_API
+    SEARCH_API,
+    ERROR_PREFIX
 } from '../constants';
 
-const ERROR_PREFIX = "[ServiceNow KB Search Error]";
-let accumulatedResults=[];
+let contextualResultsStore = []; // Stores contextual search results
+let tableResultsStore = []; // Stores knowledge table API results
+let completedTableCalls = 0; // Track number of completed API calls
+
 /**
  * Triggers a search when user input changes.
  * @param {Object} fields - The input fields containing search criteria.
@@ -45,7 +48,7 @@ export default {
      */
     [actionTypes.COMPONENT_CONNECTED]: ({ dispatch, properties: { fields }, updateState }) => {
         try {
-            fields && triggerSearch(fields, { dispatch, updateState });
+            if (fields) triggerSearch(fields, { dispatch, updateState });
         } catch (error) {
             console.error(`${ERROR_PREFIX} Error in COMPONENT_CONNECTED:`, error);
         }
@@ -54,8 +57,10 @@ export default {
     /**
      * Handles property changes and triggers search accordingly.
      */
-    [actionTypes.COMPONENT_PROPERTY_CHANGED]: ({ dispatch, updateState, properties: { fields } }) => {
-        triggerSearch(fields, { dispatch, updateState });
+    [actionTypes.COMPONENT_PROPERTY_CHANGED]: ({ action, dispatch, updateState, properties: { fields } }) => {
+        const prevVal = action.payload.previousValue?.short_description?.value;
+        const currentVal = action.payload.value?.short_description?.value;
+        if (prevVal !== currentVal) triggerSearch(fields, { dispatch, updateState });
     },
 
     /**
@@ -65,8 +70,6 @@ export default {
         try {
             const searchString = action.payload.searchString.trim().toLowerCase();
             if (!searchString) return;
-            //Make the accumulated results empty before search is requested
-            accumulatedResults=[];
             dispatch(GET_CONTEXTUAL_SEARCH_RESULTS, {
                 cx: SEARCH_CONTEXT_USED,
                 num: NUMBER_OF_RECORDS_FETCH,
@@ -105,37 +108,57 @@ export default {
     [KB_KNOWLEDGE_FETCH_STARTED]: ({ updateState }) => updateState({ isLoading: true }),
 
     /**
-     * Processes successful search results.
+     * Processes successful contextual search results.
      */
-    [KB_KNOWLEDGE_FETCH_SUCCESS]: ({ action, dispatch,updateState }) => {
+    [KB_KNOWLEDGE_FETCH_SUCCESS]: ({ action, dispatch, updateState }) => {
         try {
-            const articleIDs = (action.payload.result?.results || []).map(article => article.id.split(":")[1]);
+            contextualResultsStore = (action.payload.result?.results || []).map(article => ({
+                sys_id: article.id.split(":")[1],
+                title: article.title,
+                snippet: article.snippet,
+                score: article.score,
+                ...article
+            }));
 
-            console.log("articleIDs: "+articleIDs);
-            if (!articleIDs.length)
-                  updateState({ isLoading: false, result: [] });;
-            
-            const sysparm_query = `sys_idIN${articleIDs.join(',')}`;
-            SEARCH_TABLES.forEach(table => dispatch(KB_KNOWLEDGE_FETCH_REQUESTED, {
+            if (!contextualResultsStore.length) {
+                updateState({ isLoading: false, result: [] });
+                return;
+            }
+
+            const sysparm_query = `sys_idIN${contextualResultsStore.map(item => item.sys_id).join(',')}`;
+            SEARCH_TABLES.forEach(table =>{
+                dispatch(KB_KNOWLEDGE_FETCH_REQUESTED, {
                 table,
                 sysparm_query,
-                sysparm_display_value: true,
                 sysparm_limit: NUMBER_OF_RECORDS_FETCH
-            }));
+            })
+        });
         } catch (error) {
             console.error(`${ERROR_PREFIX} Error in KB_KNOWLEDGE_FETCH_SUCCESS:`, error);
         }
     },
 
     /**
-     * Updates state with new search results.
+     * Stores and merges search results from the knowledge table API.
      */
-    SET_SEARCH_RESULT: ({ action, updateState }) => {
+    [SET_SEARCH_RESULT]: ({ action, updateState }) => {
         const newResults = action.payload.result || [];
-        const existingIds = accumulatedResults.map(item => item.sys_id);
+        const existingIds = tableResultsStore.map(item => item.sys_id);
         const filteredResults = newResults.filter(item => !existingIds.includes(item.sys_id));
-        accumulatedResults = [...accumulatedResults, ...filteredResults];
-        updateState({ isLoading: false, result: accumulatedResults });
+        tableResultsStore = [...tableResultsStore, ...filteredResults];
+        completedTableCalls++;
+
+        if (completedTableCalls < SEARCH_TABLES.length) return;
+
+        const mergedResults = contextualResultsStore.map(searchItem => {
+            const tableData = tableResultsStore.find(item => String(item.sys_id).trim() === String(searchItem.sys_id).trim());
+            return { ...searchItem, ...tableData, meta: { ...searchItem.meta, ...tableData.meta } };
+        });
+
+        contextualResultsStore = [];
+        tableResultsStore = [];
+        completedTableCalls = 0;
+        updateState({ isLoading: false, result: mergedResults });
     },
 
     /**
@@ -145,26 +168,39 @@ export default {
         console.error(`${ERROR_PREFIX} [KB_KNOWLEDGE_FETCH_FAILED] ${action.payload.statusText}: ${action.payload.data?.error?.message || "Unknown error"}`);
         updateState({ isLoading: false, result: [] });
     },
+    /**
+ * Handles search failures.
+ * Logs the error for missing tables or invalid tables but continues the process.
+ */
+// [KB_KNOWLEDGE_FETCH_FAILED]: ({ action, updateState }) => {
+//     const errorMessage = action.payload.data?.error?.message || "Unknown error";
+//     const statusText = action.payload.statusText;
+
+//     console.error(`${ERROR_PREFIX} [KB_KNOWLEDGE_FETCH_FAILED] ${statusText}: ${errorMessage}`);
+
+//     // If the error is due to an invalid table, log a warning and skip that table
+//     if (statusText === "Bad Request" && errorMessage.includes("Invalid table")) {
+//         console.warn(`Skipping invalid table: ${action.payload.config?.url}`);
+//     }
+
+//     completedTableCalls++; // Increment the call count to ensure merging happens
+//     if (completedTableCalls >= SEARCH_TABLES.length) {
+//         // Proceed with the results we have, even if some tables failed
+//         updateState({ isLoading: false, result: tableResultsStore });
+//     }
+// },
 
     /**
      * Logs template application.
      */
     [SET_TEMPLATE]: ({ action }) => {
-        try {
-            console.log("Template Applied:", action.payload);
-        } catch (error) {
-            console.error(`${ERROR_PREFIX} Error in SET_TEMPLATE:`, error);
-        }
+       // console.log("Template Applied:", action.payload);
     },
 
     /**
      * Logs article opening action.
      */
     [OPEN_FULL_VIEW]: ({ action }) => {
-        try {
-            console.log("Open Article:", action.payload);
-        } catch (error) {
-            console.error(`${ERROR_PREFIX} Error in OPEN_FULL_VIEW:`, error);
-        }
+       // console.log("Open Article:", action.payload);
     },
 };

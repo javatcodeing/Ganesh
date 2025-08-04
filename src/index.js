@@ -1,1 +1,1 @@
-import './x-dtitg-agent-assist';
+import './x-1595240-agent-assist';
