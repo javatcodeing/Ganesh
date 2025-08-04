@@ -12,7 +12,7 @@ createCustomElement('x-1595240-agent-assist', {
 		openedArticle:{},
 		isLoading: false,
 		result: [],	
-		searchBgColor:"#d4e9e2"
+		searchBgColor: null // Will be set dynamically based on theme
 	},
 	properties: {
 		nowAvoidRender: { default: true },
@@ -30,7 +30,10 @@ createCustomElement('x-1595240-agent-assist', {
 			default:{}
 		},
 		searchBgColor:{
-			default:"#d4e9e2"
+			default: null // Will be set dynamically based on theme
+		},
+		darkMode: {
+			default: false
 		},
 	},
 	

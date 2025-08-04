@@ -6,9 +6,17 @@ import '@servicenow/now-button';
 import '@servicenow/now-heading';
 import '@servicenow/now-icon';
 import '@servicenow/now-rich-text';
-import { SET_TEMPLATE, DISPLAY_FIELDS } from '../constants';
+import { SET_TEMPLATE, DISPLAY_FIELDS, THEME_COLORS } from '../constants';
 
-const Styles = {
+/**
+ * Get theme-aware styles for search response rendering
+ * @param {boolean} darkMode - Whether dark mode is enabled
+ * @returns {Object} Theme-specific styles
+ */
+const getSearchResponseStyles = (darkMode = false) => {
+    const theme = darkMode ? THEME_COLORS.dark : THEME_COLORS.light;
+    
+    return {
     header: {
         display: 'flex',
         justifyContent: 'space-between',
@@ -21,7 +29,7 @@ const Styles = {
         gap: '8px',
     },
     span: {
-        color: 'black',
+        color: theme.textPrimary,
         fontWeight: '400',
     },
     actionContainer: {
@@ -38,7 +46,7 @@ const Styles = {
     summary: {
         whiteSpace: 'normal',
         marginTop: '3px',
-        color: '#616161',
+        color: theme.textMuted,
         fontSize: '15px',
         flexGrow: 1,  
     },
@@ -49,7 +57,7 @@ const Styles = {
         marginTop: '10px',
         fontSize: '14px',
         fontWeight: '500',
-        color: '#333',
+        color: theme.textPrimary,
     },
     noResultMessage: {
         display: 'flex',
@@ -72,11 +80,10 @@ const Styles = {
         display: 'flex',
         flexDirection: 'column',
         borderRadius: '8px',
-        border: '1px solid #e0e0e0',
+        border: `1px solid ${theme.borderLight}`,
         padding: '10px',
-        //backgroundColor: '#d4e9e2',
-        backgroundColor: 'white',
-        boxShadow: '0px 2px 4px rgba(0.5, 0.5, 0.5, 0.5)',
+        backgroundColor: theme.cardBg,
+        boxShadow: `0px 2px 4px ${theme.shadow}`,
         cursor: 'pointer',
         boxSizing: 'border-box',
         minWidth: '280px',
@@ -102,6 +109,7 @@ const Styles = {
             }
         }
     `,
+    };
 };
 
 function timeAgo(dateString) {
@@ -168,10 +176,13 @@ function displaySummary(item) {
 }
 
 
-export const renderSearchResponse = (result, fullView, dispatch, openedArticle, updateState) => (
-    <Fragment>
-        <div style={Styles.contcontainer}>
-            <style>{Styles.responsive}</style>
+export const renderSearchResponse = (result, fullView, dispatch, openedArticle, updateState, darkMode = false) => {
+    const Styles = getSearchResponseStyles(darkMode);
+    
+    return (
+        <Fragment>
+            <div style={Styles.contcontainer}>
+                <style>{Styles.responsive}</style>
             {result.length ? (
                 result.map((item) => (
                     <div className="article" 
@@ -219,4 +230,5 @@ export const renderSearchResponse = (result, fullView, dispatch, openedArticle, 
             )}
         </div>
     </Fragment>
-);
+    );
+};

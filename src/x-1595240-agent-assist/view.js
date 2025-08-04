@@ -4,9 +4,17 @@ import '@servicenow/now-heading';
 import '@servicenow/now-button';
 import '@servicenow/now-rich-text';
 import { renderSearchResponse } from './renderSearchResponse';
-import { SEARCH_REQUESTED , SET_TEMPLATE, OPEN_FULL_VIEW, DISPLAY_FIELDS} from '../constants';
+import { SEARCH_REQUESTED , SET_TEMPLATE, OPEN_FULL_VIEW, DISPLAY_FIELDS, THEME_COLORS} from '../constants';
 
-const styles = {
+/**
+ * Get theme-aware styles based on dark mode setting
+ * @param {boolean} darkMode - Whether dark mode is enabled
+ * @returns {Object} Theme-specific styles
+ */
+const getStyles = (darkMode = false) => {
+    const theme = darkMode ? THEME_COLORS.dark : THEME_COLORS.light;
+    
+    return {
     container: {
         display: 'flex',
         flexDirection: 'column',
@@ -14,8 +22,8 @@ const styles = {
         width: '95%',
         minHeight: '300px',
         padding: '1rem 2rem 1rem 1rem',
-        backgroundColor: '#d4e9e2',
-        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+        backgroundColor: theme.containerBg,
+        boxShadow: `0px 4px 8px ${theme.shadow}`,
         fontFamily: "Arial, sans-serif",
         overflow: 'hidden',
     },
@@ -35,42 +43,43 @@ const styles = {
         left: '12px',
         top: '50%',
         transform: 'translateY(-50%)',
-        color: '#555',
+        color: theme.iconColor,
         cursor: 'pointer',
     },
     searchInput: {
         width: '100%',
         padding: '10px 15px 10px 40px',
         fontSize: '16px',
-        border: '1px solid #ccc',
+        border: `1px solid ${theme.border}`,
         borderRadius: '6px',
         transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
-        color: '#333',
-        backgroundColor: '#d4e9e2',
-        boxShadow: 'inset 0px 2px 4px rgba(0, 0, 0, 0.1)',
+        color: theme.textPrimary,
+        backgroundColor: theme.inputBg,
+        boxShadow: `inset 0px 2px 4px ${theme.shadow}`,
         outline: 'none',
     },
     dropdownContainer: {
         position: 'absolute',
         top: '100%',
         left: '0',
-        backgroundColor: '#fff',
-        boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
+        backgroundColor: theme.cardBg,
+        boxShadow: `0px 4px 6px ${theme.shadow}`,
         borderRadius: '6px',
         padding: '8px',
         zIndex: 1000,
         width: '180px',
-        border: '1px solid #ccc',
+        border: `1px solid ${theme.border}`,
     },
     articleTitle: {
         margin:'0px',
         fontSize: '18px',
         fontWeight: 'bold',
         marginBottom: '5px',
+        color: theme.textPrimary,
     },
     headerInfo: {
         fontSize: '14px',
-        color: '#555',
+        color: theme.textSecondary,
         marginBottom: '5px',
     },
     articleStats: {
@@ -78,7 +87,7 @@ const styles = {
         alignItems: 'center',
         gap: '15px',
         marginBottom: '5px',
-        color: '#777',
+        color: theme.textLight,
     },
     statIcon: {
         display: 'flex',
@@ -88,7 +97,7 @@ const styles = {
     lineBreak: {
         width: '100%',
         height: '1px',
-        backgroundColor: '#ccc',
+        backgroundColor: theme.divider,
         margin: '10px 0',
     },
     btnContainer:{
@@ -101,7 +110,8 @@ const styles = {
         fontSize: '16px',
         lineHeight: '1.25',
         fontFamily: "Arial, sans-serif",
-        paddingRight:'1rem'
+        paddingRight:'1rem',
+        color: theme.textPrimary
 
     },
     displayContainer:{
@@ -119,43 +129,50 @@ const styles = {
         flexDirection:'column'
     },
     
+    };
 };
 
 /**
  * Renders the search bar component
  * @param {Object} props - Component properties
  * @param {Object} props.state - State of the component
+ * @param {Object} props.styles - Theme-aware styles
  * @param {Function} props.triggerSearch - Function to trigger search
  * @param {Function} props.handleKeyDown - Function to handle key press events
  * @param {Function} props.updateState - Function to update the state
+ * @param {boolean} props.darkMode - Whether dark mode is enabled
  */
-const SearchBar = ({ state, triggerSearch, handleKeyDown, updateState }) => (
-    <div style={styles.searchWrapper}>
-        <now-icon style={styles.searchIcon} icon="magnifying-glass-fill" size="sm" on-click={triggerSearch} />
-        <input
-            type="text"
-            value={state.searchString}
-            on-blur={triggerSearch}
-            on-keydown={handleKeyDown}
-            on-focus={() => updateState({ searchBgColor: "#ffffff" })}
-            style={{ ...styles.searchInput, backgroundColor: state.searchBgColor }}
-            placeholder="Search knowledge articles..."
-        />
-    </div>
-);
+const SearchBar = ({ state, styles, triggerSearch, handleKeyDown, updateState, darkMode }) => {
+    const theme = darkMode ? THEME_COLORS.dark : THEME_COLORS.light;
+    
+    return (
+        <div style={styles.searchWrapper}>
+            <now-icon style={styles.searchIcon} icon="magnifying-glass-fill" size="sm" on-click={triggerSearch} />
+            <input
+                type="text"
+                value={state.searchString}
+                on-blur={triggerSearch}
+                on-keydown={handleKeyDown}
+                on-focus={() => updateState({ searchBgColor: theme.inputFocusBg })}
+                style={{ ...styles.searchInput, backgroundColor: state.searchBgColor || theme.inputBg }}
+                placeholder="Search knowledge articles..."
+            />
+        </div>
+    );
+};
 
 /**
  * Renders search results or loading state
  * @param {Object} props - Component properties
  * @returns {JSX.Element}
  */
-const SearchResults = ({ isLoading, result, fullView, dispatch, openedArticle, updateState }) => (
+const SearchResults = ({ isLoading, result, fullView, dispatch, openedArticle, updateState, styles, darkMode }) => (
     isLoading ? (
         <now-loader label="Loading..." size="lg" />
     ) : !fullView ? (
-        renderSearchResponse(result, fullView, dispatch, openedArticle, updateState)
+        renderSearchResponse(result, fullView, dispatch, openedArticle, updateState, darkMode)
     ) : (
-        <ArticleView openedArticle={openedArticle} updateState={updateState} dispatch={dispatch} />
+        <ArticleView openedArticle={openedArticle} updateState={updateState} dispatch={dispatch} styles={styles} darkMode={darkMode} />
     )
 );
 
@@ -185,7 +202,7 @@ function handleOpenFullView(dispatch, item) {
  * @param {Object} props - Component properties
  * @returns {JSX.Element}
  */
-const ArticleView = ({ openedArticle, updateState, dispatch }) => (
+const ArticleView = ({ openedArticle, updateState, dispatch, styles, darkMode }) => (
     <div>
         <div style={styles.btnContainer}>
             <now-button label="Back" variant="secondary" size="sm" on-click={() => updateState({ fullView: false })} /> 
@@ -230,7 +247,7 @@ const ArticleView = ({ openedArticle, updateState, dispatch }) => (
             <div style={styles.displayContainer}>
                 {DISPLAY_FIELDS.map((fieldData, index) => (
                     <div key={index} style={styles.articledata}>
-                        {(fieldData.title && openedArticle[fieldData.field]) && <h2>{fieldData.title}</h2>}
+                        {(fieldData.title && openedArticle[fieldData.field]) && <h2 style={{ color: styles.articleTitle.color }}>{fieldData.title}</h2>}
                         <now-rich-text html={openedArticle[fieldData.field] || ""} />
                     </div>
                 ))}
@@ -243,14 +260,17 @@ const ArticleView = ({ openedArticle, updateState, dispatch }) => (
  * Main component for knowledge search
  * @param {Object} state - Component state
  * @param {Object} handlers - Dispatch and updateState functions
+ * @param {Object} properties - Component properties including darkMode
  * @returns {JSX.Element}
  */
-export default (state, { dispatch, updateState }) => {
+export default (state, { dispatch, updateState }, { darkMode = false }) => {
     const { isLoading, searchString, result, fullView, openedArticle } = state;
+    const styles = getStyles(darkMode);
+    const theme = darkMode ? THEME_COLORS.dark : THEME_COLORS.light;
 
     const triggerSearch = ({ target: { value } }) => {
         const searchValue = value.trim();
-        updateState({ fullView: false, searchString: searchValue, searchBgColor: "#d4e9e2" });
+        updateState({ fullView: false, searchString: searchValue, searchBgColor: theme.inputBg });
         if (searchValue === searchString) return;
         if (searchValue) {
             dispatch(SEARCH_REQUESTED, { searchString: searchValue, sysparm_display_value: 'true' });
@@ -264,15 +284,31 @@ export default (state, { dispatch, updateState }) => {
     };
 
     return (
-        <div style={{ ...styles.container, backgroundColor: fullView ? 'white' : '#d4e9e2' }}>
+        <div style={{ ...styles.container, backgroundColor: fullView ? theme.cardBg : theme.containerBg }}>
             {!fullView && (
                 <div style={styles.header}>
                     <now-heading label="Knowledge Search" variant="header-secondary" />
-                    <SearchBar state={state} triggerSearch={triggerSearch} handleKeyDown={handleKeyDown} updateState={updateState} />
+                    <SearchBar 
+                        state={state} 
+                        styles={styles}
+                        triggerSearch={triggerSearch} 
+                        handleKeyDown={handleKeyDown} 
+                        updateState={updateState}
+                        darkMode={darkMode}
+                    />
                 </div>
             )}
             <main style={styles.mainContainer}>
-                <SearchResults isLoading={isLoading} result={result} fullView={fullView} dispatch={dispatch} openedArticle={openedArticle} updateState={updateState} />
+                <SearchResults 
+                    isLoading={isLoading} 
+                    result={result} 
+                    fullView={fullView} 
+                    dispatch={dispatch} 
+                    openedArticle={openedArticle} 
+                    updateState={updateState}
+                    styles={styles}
+                    darkMode={darkMode}
+                />
             </main>
         </div>
     );

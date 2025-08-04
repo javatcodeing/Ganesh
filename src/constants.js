@@ -38,3 +38,43 @@ export const DISPLAY_FIELDS=[
     { title: "Explanation", field: "kb_explanation" }
 ]
 
+// Dark Mode Color Schemes
+export const THEME_COLORS = {
+    light: {
+        background: '#d4e9e2',
+        containerBg: '#d4e9e2',
+        cardBg: '#ffffff',
+        textPrimary: '#333333',
+        textSecondary: '#555555',
+        textMuted: '#616161',
+        textLight: '#777777',
+        border: '#cccccc',
+        borderLight: '#e0e0e0',
+        shadow: 'rgba(0, 0, 0, 0.1)',
+        inputBg: '#d4e9e2',
+        inputFocusBg: '#ffffff',
+        iconColor: '#555555',
+        buttonBg: '#ffffff',
+        buttonHover: '#f5f5f5',
+        divider: '#cccccc'
+    },
+    dark: {
+        background: '#1a1a1a',
+        containerBg: '#2d2d2d',
+        cardBg: '#3a3a3a',
+        textPrimary: '#ffffff',
+        textSecondary: '#e0e0e0',
+        textMuted: '#b0b0b0',
+        textLight: '#999999',
+        border: '#4a4a4a',
+        borderLight: '#3a3a3a',
+        shadow: 'rgba(0, 0, 0, 0.3)',
+        inputBg: '#3a3a3a',
+        inputFocusBg: '#4a4a4a',
+        iconColor: '#e0e0e0',
+        buttonBg: '#4a4a4a',
+        buttonHover: '#5a5a5a',
+        divider: '#4a4a4a'
+    }
+}
+
