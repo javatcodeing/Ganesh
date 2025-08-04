@@ -17,6 +17,11 @@ export const GET_CONTEXTUAL_SEARCH_RESULTS="GET_CONTEXTUAL_SEARCH_RESULTS";
 export const SEARCH_CONTEXT_USED='69a05b3853001300a9a2664906dc343f';
 export const SEARCH_TABLES=["kb_template_faq", "kb_template_how_to", "kb_template_kcs_article", "kb_template_what_is", "kb_knowledge"]; //"u_kb_template_business_case",
 export const SEARCH_API ='/api/now/cxs/search';
+export const USER_PREFERENCE_API = '/api/now/table/sys_user_preference';
+export const THEME_PREFERENCE_QUERY = 'name=glide.ui.polaris.theme.variant^user=b3293da20cf452505dcfa4300ffc3c2f';
+export const DARK_MODE_VALUE = 'bc7f41d02b807950c0fb4cfbad01a098';
+export const FETCH_USER_THEME_PREFERENCE = 'FETCH_USER_THEME_PREFERENCE';
+export const SET_THEME_PREFERENCE = 'SET_THEME_PREFERENCE';
 
 export const DISPLAY_FIELDS=[
     { title: "", field: "text" },

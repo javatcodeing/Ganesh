@@ -70,42 +70,49 @@ const getSearchResponseStyles = (darkMode = false) => {
     },
     contcontainer: {
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-        gap: '16px',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+        gap: '12px',
         width: '100%',
-        padding: '8px',
+        padding: '4px',
         boxSizing: 'border-box',
     },
     article: {
         display: 'flex',
         flexDirection: 'column',
-        borderRadius: '8px',
+        borderRadius: '4px',
         border: `1px solid ${theme.borderLight}`,
-        padding: '10px',
+        padding: '8px',
         backgroundColor: theme.cardBg,
-        boxShadow: `0px 2px 4px ${theme.shadow}`,
+        boxShadow: `0px 1px 3px ${theme.shadow}`,
         cursor: 'pointer',
         boxSizing: 'border-box',
-        minWidth: '280px',
-        transition: 'transform 0.2s ease-in-out',
-        display: 'flex',  // Make sure it behaves as a flex container
-        flexDirection: 'column',
-        height: '100%',  // Allow container to grow and align footer correctly
+        minWidth: '250px',
+        transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+        height: '100%',
+        '&:hover': {
+            transform: 'translateY(-1px)',
+            boxShadow: `0px 2px 6px ${theme.shadow}`,
+        }
     },
     responsive: `
-        @media (max-width: 1024px) {
+        @media (max-width: 1200px) {
             .contcontainer {
-                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 8px;
             }
         }
         @media (max-width: 768px) {
             .contcontainer {
-                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                grid-template-columns: 1fr;
+                gap: 6px;
+            }
+            .article {
+                min-width: unset;
             }
         }
         @media (max-width: 480px) {
             .contcontainer {
-                grid-template-columns: 1fr;
+                padding: 2px;
             }
         }
     `,

@@ -1,36 +1,41 @@
 import '../src/x-1595240-agent-assist';
 
-const el = document.createElement('DIV');
-document.body.appendChild(el);
+// Create container for ServiceNow workspace integration
+const container = document.createElement('DIV');
+container.style.cssText = `
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 16px;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+`;
+document.body.appendChild(container);
 
-// Example with light mode (default)
-el.innerHTML = `		
+// Agent Assist component - will automatically detect dark mode from user preferences
+const componentContainer = document.createElement('DIV');
+componentContainer.style.cssText = `
+    width: 100%;
+    min-height: 400px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+`;
+container.appendChild(componentContainer);
+
+componentContainer.innerHTML = `		
 	<x-1595240-agent-assist></x-1595240-agent-assist>
 `;
 
-// Example with dark mode
-const darkEl = document.createElement('DIV');
-darkEl.style.marginTop = '20px';
-document.body.appendChild(darkEl);
-
-darkEl.innerHTML = `		
-	<x-1595240-agent-assist dark-mode="true"></x-1595240-agent-assist>
+// Add info text
+const infoText = document.createElement('P');
+infoText.style.cssText = `
+    margin-top: 16px;
+    padding: 12px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #666;
 `;
-
-// Add toggle button for demonstration
-const toggleButton = document.createElement('button');
-toggleButton.textContent = 'Toggle Dark Mode';
-toggleButton.style.margin = '20px';
-toggleButton.style.padding = '10px 20px';
-toggleButton.style.cursor = 'pointer';
-
-let isDark = false;
-toggleButton.addEventListener('click', () => {
-    isDark = !isDark;
-    const component = document.querySelector('x-1595240-agent-assist');
-    if (component) {
-        component.setAttribute('dark-mode', isDark.toString());
-    }
-});
-
-document.body.insertBefore(toggleButton, el);
+infoText.textContent = 'Dark mode will be automatically detected from ServiceNow user preferences (glide.ui.polaris.theme.variant)';
+container.appendChild(infoText);

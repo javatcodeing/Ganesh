@@ -18,19 +18,23 @@ const getStyles = (darkMode = false) => {
     container: {
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
-        width: '95%',
-        minHeight: '300px',
-        padding: '1rem 2rem 1rem 1rem',
+        width: '100%',
+        minHeight: '200px',
+        maxHeight: '80vh',
+        padding: '0.75rem',
         backgroundColor: theme.containerBg,
-        boxShadow: `0px 4px 8px ${theme.shadow}`,
+        boxShadow: `0px 2px 4px ${theme.shadow}`,
         fontFamily: "Arial, sans-serif",
-        overflow: 'hidden',
+        overflow: 'auto',
+        boxSizing: 'border-box',
+        borderRadius: '4px',
     },
     header: {
         width: '100%',
-        marginBottom: '1rem',
-        paddingRight:'1rem'
+        marginBottom: '0.75rem',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '0.5rem',
     },
     searchWrapper: {
         position: 'relative',
@@ -40,23 +44,25 @@ const getStyles = (darkMode = false) => {
     },
     searchIcon: {
         position: 'absolute',
-        left: '12px',
+        left: '10px',
         top: '50%',
         transform: 'translateY(-50%)',
         color: theme.iconColor,
         cursor: 'pointer',
+        zIndex: 1,
     },
     searchInput: {
         width: '100%',
-        padding: '10px 15px 10px 40px',
-        fontSize: '16px',
+        padding: '8px 12px 8px 36px',
+        fontSize: '14px',
         border: `1px solid ${theme.border}`,
-        borderRadius: '6px',
+        borderRadius: '4px',
         transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
         color: theme.textPrimary,
         backgroundColor: theme.inputBg,
-        boxShadow: `inset 0px 2px 4px ${theme.shadow}`,
+        boxShadow: `inset 0px 1px 2px ${theme.shadow}`,
         outline: 'none',
+        boxSizing: 'border-box',
     },
     dropdownContainer: {
         position: 'absolute',
@@ -107,12 +113,13 @@ const getStyles = (darkMode = false) => {
     },
     mainContainer:{
         width: '100%',
-        fontSize: '16px',
-        lineHeight: '1.25',
+        fontSize: '14px',
+        lineHeight: '1.4',
         fontFamily: "Arial, sans-serif",
-        paddingRight:'1rem',
-        color: theme.textPrimary
-
+        color: theme.textPrimary,
+        flex: 1,
+        overflow: 'auto',
+        maxHeight: 'calc(80vh - 120px)',
     },
     displayContainer:{
     maxWidth: '100%',
@@ -270,7 +277,11 @@ export default (state, { dispatch, updateState }, { darkMode = false }) => {
 
     const triggerSearch = ({ target: { value } }) => {
         const searchValue = value.trim();
-        updateState({ fullView: false, searchString: searchValue, searchBgColor: theme.inputBg });
+        updateState({ 
+            fullView: false, 
+            searchString: searchValue, 
+            searchBgColor: state.searchBgColor || theme.inputBg 
+        });
         if (searchValue === searchString) return;
         if (searchValue) {
             dispatch(SEARCH_REQUESTED, { searchString: searchValue, sysparm_display_value: 'true' });
@@ -284,7 +295,10 @@ export default (state, { dispatch, updateState }, { darkMode = false }) => {
     };
 
     return (
-        <div style={{ ...styles.container, backgroundColor: fullView ? theme.cardBg : theme.containerBg }}>
+        <div 
+            className="agent-assist-container"
+            style={{ ...styles.container, backgroundColor: fullView ? theme.cardBg : theme.containerBg }}
+        >
             {!fullView && (
                 <div style={styles.header}>
                     <now-heading label="Knowledge Search" variant="header-secondary" />
@@ -298,7 +312,7 @@ export default (state, { dispatch, updateState }, { darkMode = false }) => {
                     />
                 </div>
             )}
-            <main style={styles.mainContainer}>
+            <main className="search-results" style={styles.mainContainer}>
                 <SearchResults 
                     isLoading={isLoading} 
                     result={result} 
